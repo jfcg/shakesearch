@@ -14,7 +14,10 @@ import (
 
 var searcher Searcher
 
-const MaxContext = 50 // context bytes in results
+const (
+	MaxContext = 50 // context bytes in results
+	MinQuery   = 2  // minimum query length in bytes
+)
 
 func main() {
 	err := searcher.Load("completeworks.txt")
@@ -47,7 +50,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	query, ok := r.URL.Query()["q"]
 	qr := strings.TrimSpace(query[0])
 
-	if !ok || len(qr) < 2 {
+	if !ok || len(qr) < MinQuery {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("search query too short"))
 		return
