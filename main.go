@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/jfcg/sorty"
 )
 
 var searcher Searcher
@@ -20,6 +22,9 @@ const (
 )
 
 func main() {
+	// limit goroutines for sorty to 2
+	sorty.Mxg = 2
+
 	err := searcher.Load("completeworks.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -101,6 +106,10 @@ func (s *Searcher) Search(query string) (results []string) {
 		}
 		idxs = append(idxs, s.SuffixArray.Lookup([]byte(queries[i]), -1)...)
 	}
+	// we know indices are all different since queries are all distinct
+
+	// sort indices for sequential results and better locality
+	sorty.SortI(idxs)
 
 	buf := s.SuffixArray.Bytes()
 	for _, idx := range idxs {
