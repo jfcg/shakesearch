@@ -72,9 +72,31 @@ func (s *Searcher) Load(filename string) error {
 	return nil
 }
 
-func (s *Searcher) Search(query string) []string {
-	idxs := s.SuffixArray.Lookup([]byte(query), -1)
-	results := []string{}
+func (s *Searcher) Search(query string) (results []string) {
+
+	// Also query lower/upper/title cases (if different)
+	queries := []string{query,
+		strings.ToLower(query),
+		strings.ToUpper(query),
+		strings.Title(query)}
+
+	for i := 1; i < len(queries); i++ {
+		for k := 0; k < i; k++ {
+			if queries[i] == queries[k] {
+				queries[i] = ""
+				break
+			}
+		}
+	}
+
+	var idxs []int
+	for i := 0; i < len(queries); i++ {
+		if len(queries[i]) == 0 {
+			continue
+		}
+		idxs = append(idxs, s.SuffixArray.Lookup([]byte(queries[i]), -1)...)
+	}
+
 	buf := s.SuffixArray.Bytes()
 	for _, idx := range idxs {
 		results = append(results, string(buf[idx-250:idx+250]))
