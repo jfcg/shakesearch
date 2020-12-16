@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var searcher Searcher
@@ -42,12 +43,14 @@ type Searcher struct {
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {
 	query, ok := r.URL.Query()["q"]
-	if !ok || len(query[0]) < 1 {
+	qr := strings.TrimSpace(query[0])
+
+	if !ok || len(qr) < 2 {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("missing search query in URL params"))
+		w.Write([]byte("search query too short"))
 		return
 	}
-	results := searcher.Search(query[0])
+	results := searcher.Search(qr)
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
 	err := enc.Encode(results)
