@@ -14,6 +14,8 @@ import (
 
 var searcher Searcher
 
+const MaxContext = 50 // context bytes in results
+
 func main() {
 	err := searcher.Load("completeworks.txt")
 	if err != nil {
@@ -99,7 +101,15 @@ func (s *Searcher) Search(query string) (results []string) {
 
 	buf := s.SuffixArray.Bytes()
 	for _, idx := range idxs {
-		results = append(results, string(buf[idx-250:idx+250]))
+		a := idx - MaxContext
+		if a < 0 {
+			a = 0
+		}
+		b := idx + MaxContext
+		if b > len(buf) {
+			b = len(buf)
+		}
+		results = append(results, string(buf[a:b]))
 	}
-	return results
+	return
 }
