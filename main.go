@@ -61,8 +61,8 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	results := searcher.Search(qr)
-	buf := &bytes.Buffer{}
-	enc := json.NewEncoder(buf)
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
 	err := enc.Encode(results)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
