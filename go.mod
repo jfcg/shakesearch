@@ -1,4 +1,4 @@
-module pulley.com/shakesearch
+module github.com/jfcg/shakesearch
 
 go 1.15
 
