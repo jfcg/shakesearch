@@ -88,6 +88,7 @@ func (s *Searcher) Search(query string) (results []string) {
 	lower := strings.ToLower(query)
 	queries := [...]string{query, lower,
 		strings.ToUpper(query),
+		strings.Title(query),
 		strings.Title(lower)}
 
 	for i := 1; i < len(queries); i++ {
