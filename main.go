@@ -119,7 +119,7 @@ func (s *Searcher) Search(query string) (results []string) {
 			a = 0
 		}
 		b := idx + len(query) + MaxContext
-		if b > len(buf) {
+		if b < 0 || b > len(buf) {
 			b = len(buf)
 		}
 		results = append(results, string(buf[a:b]))
