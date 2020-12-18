@@ -61,6 +61,9 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	results := searcher.Search(qr)
+	if len(results) == 0 {
+		results = append(results, "<b>Not found</b>: "+qr)
+	}
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	err := enc.Encode(results)
