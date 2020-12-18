@@ -118,7 +118,7 @@ func (s *Searcher) Search(query string) (results []string) {
 		if a < 0 {
 			a = 0
 		}
-		b := idx + MaxContext
+		b := idx + len(query) + MaxContext
 		if b > len(buf) {
 			b = len(buf)
 		}
