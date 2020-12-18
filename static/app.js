@@ -11,6 +11,10 @@ const Controller = {
   },
 
   updateTable: (results) => {
+    const msg = document.getElementById("message");
+    msg.innerHTML = results.Msg;
+
+    results = results.Rows || [];
     const table = document.getElementById("table-body");
     const rows = [];
     for (let result of results) {

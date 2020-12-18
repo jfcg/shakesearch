@@ -51,6 +51,11 @@ type Searcher struct {
 	SuffixArray *suffixarray.Index
 }
 
+type jResult struct {
+	Msg  string
+	Rows []string
+}
+
 func handleSearch(w http.ResponseWriter, r *http.Request) {
 	query, ok := r.URL.Query()["q"]
 	qr := strings.TrimSpace(query[0])
@@ -60,13 +65,19 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("search query too short"))
 		return
 	}
+
 	results := searcher.Search(qr)
+	var msg string
 	if len(results) == 0 {
-		results = append(results, "<b>Not found</b>: "+qr)
+		msg = "<b>Not found</b>: " + qr
+	} else {
+		msg = fmt.Sprintf("<b>%d</b> results found:", len(results))
 	}
+
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
-	err := enc.Encode(results)
+	err := enc.Encode(jResult{msg, results})
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("encoding failure"))
